@@ -1,0 +1,71 @@
+## 📌 Overview
+
+**Qodex** est une plateforme web innovante dédiée à l'organisation et la gestion de quiz éducatifs en ligne.  
+Elle vise à moderniser l'évaluation des connaissances en offrant un environnement numérique interactif permettant de connecter enseignants et étudiants dans un processus d’apprentissage dynamique.
+
+La plateforme facilite :
+- La création et la gestion des catégories
+- La conception des quiz et questions
+- La participation des étudiants
+- Le suivi des scores et résultats
+- La sécurisation des échanges entre utilisateurs
+
+Qodex met l’accent sur la simplicité, la performance, et la sécurité, en garantissant une expérience fluide aux enseignants comme aux apprenants.
+## Technologies Utilisées
+
+### Backend
+- **PHP (vanilla)**  
+- Gestion sécurisée des sessions  
+- Requêtes SQL préparées (PDO / MySQLi)
+
+### Base de Données
+- **MySQL**
+- Hébergée et gérée localement via **XAMPP**
+- Respect des contraintes relationnelles (clés étrangères, index…)
+
+### Frontend
+- **HTML5**
+- **CSS3**
+- **JavaScript**
+- Interface dynamique sans framework externe
+
+### Environnement de Développement
+- **XAMPP** (Apache + PHP + MySQL)
+- phpMyAdmin pour la gestion de la base de données
+- Git & GitHub pour le versioning
+
+### Installation & Exécution
+1. Installer XAMPP (Apache+PHP+MySQL)  
+2. Copier le dossier `Qodex` dans `C:\xampp\htdocs\`  
+3. Lancer Apache et MySQL via XAMPP Control Panel  
+4. Créer base `qodex` dans phpMyAdmin et importer `sql/qodex.sql`  
+5. Vérifier `includes/config.php` :
+```php
+<?php
+$host="localhost";$db="qodex";$user="root";$pass="";
+?>
+
+### Structure des fichiers
+qodex/
+├── config/
+│   └── database.php
+├── includes/
+│   ├── header.php
+│   └── footer.php
+├── auth/
+│   ├── login.php
+│   └── register.php
+├── enseignant/
+│   ├── dashboard.php
+│   ├── add_quiz.php
+│   ├── manage_quizzes.php
+│   ├── add_question.php
+│   ├── view_results.php
+│   └── statistics.php
+├── etudiant/
+│   ├── dashboard.php
+│   ├── available_quizzes.php
+│   ├── take_quiz.php
+│   ├── submit_quiz.php
+│   └── my_results.php
+└── logout.php
