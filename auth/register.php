@@ -46,3 +46,6 @@ if (empty($errors)) {
     }
 }
 
+if (empty($errors)) {
+$passwordHash = password_hash($password, PASSWORD_DEFAULT);
+}
