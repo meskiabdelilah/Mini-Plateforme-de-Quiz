@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizMaster - Espace Enseignant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation Enseignant -->
+    <nav class="bg-white shadow-lg fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-graduation-cap text-3xl text-indigo-600"></i>
+                        <span class="ml-2 text-2xl font-bold text-gray-900">QuizMaster</span>
+                        <span class="ml-3 px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-full">Enseignant</span>
+                    </div>
+                    <div class="hidden md:ml-10 md:flex md:space-x-8">
+                        <a href="#dashboard" onclick="showSection('dashboard')" class="border-indigo-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            <i class="fas fa-home mr-2"></i>Tableau de bord
+                        </a>
+                        <a href="#categories" onclick="showSection('categories')" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            <i class="fas fa-folder mr-2"></i>Catégories
+                        </a>
+                        <a href="#quiz" onclick="showSection('quiz')" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            <i class="fas fa-clipboard-list mr-2"></i>Mes Quiz
+                        </a>
+                        <a href="#results" onclick="showSection('results')" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            <i class="fas fa-chart-bar mr-2"></i>Résultats
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="hidden md:flex md:items-center md:space-x-4">
+                        <button class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-bell text-xl"></i>
+                        </button>
+                        <div class="relative">
+                            <button class="flex items-center space-x-3 focus:outline-none" onclick="toggleDropdown()">
+                                <div class="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold">
+                                    AB
+                                </div>
+                                <div class="hidden md:block text-left">
+                                    <div class="text-sm font-medium text-gray-900">Ahmed Benjelloun</div>
+                                    <div class="text-xs text-gray-500">Enseignant</div>
+                                </div>
+                                <i class="fas fa-chevron-down text-gray-500"></i>
+                            </button>
+                            <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-user mr-2"></i>Mon Profil
+                                </a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-cog mr-2"></i>Paramètres
+                                </a>
+                                <hr class="my-1">
+                                <a href="#student" onclick="switchToStudent()" class="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-100">
+                                    <i class="fas fa-exchange-alt mr-2"></i>Espace Étudiant
+                                </a>
+                                <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ESPACE ENSEIGNANT -->
+    <div id="teacherSpace" class="pt-16">
+        
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="section-content">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <h1 class="text-4xl font-bold mb-4">Tableau de bord Enseignant</h1>
+                    <p class="text-xl text-indigo-100 mb-6">Gérez vos quiz et suivez les performances de vos étudiants</p>
+                    <div class="flex gap-4">
+                        <button onclick="showSection('categories'); openModal('createCategoryModal')" class="bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition">
+                            <i class="fas fa-folder-plus mr-2"></i>Nouvelle Catégorie
+                        </button>
+                        <button onclick="showSection('quiz'); openModal('createQuizModal')" class="bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-800 transition">
+                            <i class="fas fa-plus-circle mr-2"></i>Créer un Quiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Quiz</p>
+                                <p class="text-3xl font-bold text-gray-900">24</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-lg">
+                                <i class="fas fa-clipboard-list text-blue-600 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Catégories</p>
+                                <p class="text-3xl font-bold text-gray-900">8</p>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-lg">
+                                <i class="fas fa-folder text-purple-600 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Étudiants Actifs</p>
+                                <p class="text-3xl font-bold text-gray-900">156</p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-lg">
+                                <i class="fas fa-user-graduate text-green-600 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Taux Réussite</p>
+                                <p class="text-3xl font-bold text-gray-900">87%</p>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-lg">
+                                <i class="fas fa-chart-line text-yellow-600 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories Section -->
+        <div id="categories" class="section-content hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900">Gestion des Catégories</h2>
+                        <p class="text-gray-600 mt-2">Organisez vos quiz par catégories</p>
+                    </div>
+                    <button onclick="openModal('createCategoryModal')" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                        <i class="fas fa-plus mr-2"></i>Nouvelle Catégorie
+                    </button>
+                </div>
+
+                <!-- Categories List -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900">HTML/CSS</h3>
+                                <p class="text-gray-600 text-sm mt-1">Bases du développement web</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="text-blue-600 hover:text-blue-700">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-600 hover:text-red-700">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500"><i class="fas fa-clipboard-list mr-2"></i>12 quiz</span>
+                            <span class="text-gray-500"><i class="fas fa-user-friends mr-2"></i>45 étudiants</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900">JavaScript</h3>
+                                <p class="text-gray-600 text-sm mt-1">Programmation côté client</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="text-blue-600 hover:text-blue-700">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-600 hover:text-red-700">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500"><i class="fas fa-clipboard-list mr-2"></i>8 quiz</span>
+                            <span class="text-gray-500"><i class="fas fa-user-friends mr-2"></i>38 étudiants</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900">PHP/MySQL</h3>
+                                <p class="text-gray-600 text-sm mt-1">Backend et bases de données</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button class="text-blue-600 hover:text-blue-700">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="text-red-600 hover:text-red-700">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="text-gray-500"><i class="fas fa-clipboard-list mr-2"></i>10 quiz</span>
+                            <span class="text-gray-500"><i class="fas fa-user-friends mr-2"></i>42 étudiants</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div id="quiz" class="section-content hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900">Mes Quiz</h2>
+                        <p class="text-gray-600 mt-2">Créez et gérez vos quiz</p>
+                    </div>
+                    <button onclick="openModal('createQuizModal')" class="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                        <i class="fas fa-plus mr-2"></i>Créer un Quiz
+                    </button>
+                </div>
+
+                <!-- Quiz List -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">HTML/CSS</span>
+                                <div class="flex gap-2">
+                                    <button class="text-blue-600 hover:text-blue-700">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-700">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-2">Les Bases de HTML5</h3>
+                            <p class="text-gray-600 mb-4 text-sm">Testez vos connaissances sur les éléments HTML5</p>
+                            <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                                <span><i class="fas fa-question-circle mr-1"></i>20 questions</span>
+                                <span><i class="fas fa-user-friends mr-1"></i>45 participants</span>
+                            </div>
+                            <button class="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition">
+                                <i class="fas fa-eye mr-2"></i>Voir les résultats
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="section-content hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8">Résultats des Étudiants</h2>
+                
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Étudiant</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quiz</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold mr-3">
+                                                YK
+                                            </div>
+                                            <div class="text-sm font-medium text-gray-900">Youssef Kadiri</div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Les Bases de HTML5</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-lg font-bold text-green-600">18/20</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">04 Déc 2024</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            Réussi
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ESPACE ÉTUDIANT -->
+ <div id="studentSpace" class="hidden pt-16">
+        
+        <!-- Student Dashboard -->
+        <div id="studentDashboard" class="student-section">
+            <div class="bg-gradient-to-r from-green-600 to-teal-600 text-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <h1 class="text-4xl font-bold mb-4">Espace Étudiant</h1>
+                    <p class="text-xl text-green-100 mb-6">Passez des quiz et suivez votre progression</p>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-8">Catégories Disponibles</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div onclick="showStudentSection('categoryQuizzes', 'HTML/CSS')" class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden group cursor-pointer">
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 text-white">
+                            <i class="fas fa-code text-4xl mb-3"></i>
+                            <h3 class="text-xl font-bold">HTML/CSS</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600 mb-4">Maîtrisez les bases du web</p>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-500"><i class="fas fa-clipboard-list mr-2"></i>12 quiz</span>
+                                <span class="text-green-600 font-semibold group-hover:translate-x-2 transition-transform">Explorer →</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div onclick="showStudentSection('categoryQuizzes', 'JavaScript')" class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden group cursor-pointer">
+                        <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 text-white">
+                            <i class="fas fa-laptop-code text-4xl mb-3"></i>
+                            <h3 class="text-xl font-bold">JavaScript</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600 mb-4">Programmation interactive</p>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-500"><i class="fas fa-clipboard-list mr-2"></i>8 quiz</span>
+                                <span class="text-purple-600 font-semibold group-hover:translate-x-2 transition-transform">Explorer →</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div onclick="showStudentSection('categoryQuizzes', 'PHP/MySQL')" class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden group cursor-pointer">
+                        <div class="bg-gradient-to-br from-green-500 to-green-600 p-6 text-white">
+                            <i class="fas fa-database text-4xl mb-3"></i>
+                            <h3 class="text-xl font-bold">PHP/MySQL</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600 mb-4">Backend et bases de données</p>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-500"><i class="fas fa-clipboard-list mr-2"></i>10 quiz</span>
+                                <span class="text-green-600 font-semibold group-hover:translate-x-2 transition-transform">Explorer →</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div onclick="showStudentSection('studentResults')" class="bg-white rounded-xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden group cursor-pointer">
+                        <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 text-white">
+                            <i class="fas fa-chart-line text-4xl mb-3"></i>
+                            <h3 class="text-xl font-bold">Mes Résultats</h3>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600 mb-4">Consultez vos performances</p>
+                            <div class="flex justify-between items-center text-sm">
+                                <span class="text-gray-500"><i class="fas fa-trophy mr-2"></i>24 tentatives</span>
+                                <span class="text-orange-600 font-semibold group-hover:translate-x-2 transition-transform">Voir →</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category Quizzes List -->
+        <div id="categoryQuizzes" class="student-section hidden">
+            <div class="bg-gradient-to-r from-green-600 to-teal-600 text-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <button onclick="showStudentSection('studentDashboard')" class="text-white hover:text-green-100 mb-4">
+                        <i class="fas fa-arrow-left mr-2"></i>Retour aux catégories
+                    </button>
+                    <h1 class="text-4xl font-bold mb-2" id="categoryTitle">HTML/CSS</h1>
+                    <p class="text-xl text-green-100">Sélectionnez un quiz pour commencer</p>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div id="quizListContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Quiz cards will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Taking Interface -->
+        <div id="takeQuiz" class="student-section hidden">
+            <div class="bg-gradient-to-r from-green-600 to-teal-600 text-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h1 class="text-3xl font-bold mb-2" id="quizTitle">Les Bases de HTML5</h1>
+                            <p class="text-green-100">Question <span id="currentQuestion">1</span> sur <span id="totalQuestions">20</span></p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-green-100 mb-1">Temps restant</div>
+                            <div class="text-3xl font-bold" id="timer">30:00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div class="bg-white rounded-xl shadow-lg p-8">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6" id="questionText">
+                        Quelle balise HTML5 est utilisée pour définir une section de navigation ?
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div onclick="selectAnswer(this)" class="answer-option p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-green-500 hover:bg-green-50 transition">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center mr-4 option-radio">
+                                    <div class="w-4 h-4 rounded-full bg-green-600 hidden option-selected"></div>
+                                </div>
+                                <span class="text-lg">&lt;nav&gt;</span>
+                            </div>
+                        </div>
+
+                        <div onclick="selectAnswer(this)" class="answer-option p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-green-500 hover:bg-green-50 transition">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center mr-4 option-radio">
+                                    <div class="w-4 h-4 rounded-full bg-green-600 hidden option-selected"></div>
+                                </div>
+                                <span class="text-lg">&lt;navigation&gt;</span>
+                            </div>
+                        </div>
+
+                        <div onclick="selectAnswer(this)" class="answer-option p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-green-500 hover:bg-green-50 transition">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center mr-4 option-radio">
+                                    <div class="w-4 h-4 rounded-full bg-green-600 hidden option-selected"></div>
+                                </div>
+                                <span class="text-lg">&lt;menu&gt;</span>
+                            </div>
+                        </div>
+
+                        <div onclick="selectAnswer(this)" class="answer-option p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-green-500 hover:bg-green-50 transition">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center mr-4 option-radio">
+                                    <div class="w-4 h-4 rounded-full bg-green-600 hidden option-selected"></div>
+                                </div>
+                                <span class="text-lg">&lt;navbar&gt;</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between mt-8">
+                        <button onclick="previousQuestion()" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                            <i class="fas fa-arrow-left mr-2"></i>Précédent
+                        </button>
+                        <button onclick="nextQuestion()" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                            Suivant<i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Results -->
+        <div id="studentResults" class="student-section hidden">
+            <div class="bg-gradient-to-r from-green-600 to-teal-600 text-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                    <button onclick="showStudentSection('studentDashboard')" class="text-white hover:text-green-100 mb-4">
+                        <i class="fas fa-arrow-left mr-2"></i>Retour au tableau de bord
+                    </button>
+                    <h1 class="text-4xl font-bold mb-2">Mes Résultats</h1>
+                    <p class="text-xl text-green-100">Suivez votre progression et vos performances</p>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Quiz Complétés</p>
+                                <p class="text-3xl font-bold text-gray-900">24</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-lg">
+                                <i class="fas fa-check-circle text-blue-600 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Moyenne</p>
+                                <p class="text-3xl font-bold text-gray-900">16.5/20</p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-lg">
+                                <i class="fas fa-star text-green-600 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Taux Réussite</p>
+                                <p class="text-3xl font-bold text-gray-900">85%</p>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-lg">
+                                <i class="fas fa-chart-line text-purple-600 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Classement</p>
+                                <p class="text-3xl font-bold text-gray-900">#12</p>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-lg">
+                                <i class="fas fa-trophy text-yellow-600 text-2xl"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Table -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quiz</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Catégorie</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Temps</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">Les Bases de HTML5</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">HTML/CSS</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-lg font-bold text-green-600">18/20</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">04 Déc 2024</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">28:45</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            <i class="fas fa-check mr-1"></i>Réussi
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">CSS Avancé</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">HTML/CSS</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-lg font-bold text-green-600">15/20</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">03 Déc 2024</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">24:12</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            <i class="fas fa-check mr-1"></i>Réussi
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">JavaScript Fondamentaux</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">JavaScript</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="text-lg font-bold text-red-600">8/20</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">02 Déc 2024</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">30:00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                            <i class="fas fa-times mr-1"></i>Échoué
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Créer Catégorie -->
+    <div id="createCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-900">Nouvelle Catégorie</h3>
+                    <button onclick="closeModal('createCategoryModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form>
+                    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                    
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                            Nom de la catégorie *
+                        </label>
+                        <input type="text" name="nom" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Ex: HTML/CSS">
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                            Description
+                        </label>
+                        <textarea name="description" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Décrivez cette catégorie..."></textarea>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="button" onclick="closeModal('createCategoryModal')" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                            Annuler
+                        </button>
+                        <button type="submit" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                            <i class="fas fa-check mr-2"></i>Créer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Créer Quiz -->
+    <div id="createQuizModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-900">Créer un Quiz</h3>
+                    <button onclick="closeModal('createQuizModal')" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <form>
+                    <input type="hidden" name="csrf_token" value="<?php echo generate_csrf_token(); ?>">
+                    
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">
+                                Titre du quiz *
+                            </label>
+                            <input type="text" name="titre" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Ex: Les Bases de HTML5">
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 text-sm font-bold mb-2">
+                                Catégorie *
+                            </label>
+                            <select name="categorie_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                <option value="">Sélectionner une catégorie</option>
+                                <option value="1">HTML/CSS</option>
+                                <option value="2">JavaScript</option>
+                                <option value="3">PHP/MySQL</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-gray-700 text-sm font-bold mb-2">
+                            Description
+                        </label>
+                        <textarea name="description" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Décrivez votre quiz..."></textarea>
+                    </div>
+
+                    <hr class="my-6">
+
+                    <!-- Questions Section -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-xl font-bold text-gray-900">Questions</h4>
+                            <button type="button" onclick="addQuestion()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-sm">
+                                <i class="fas fa-plus mr-2"></i>Ajouter une question
+                            </button>
+                        </div>
+
+                        <div id="questionsContainer">
+                            <!-- Question 1 -->
+                            <div class="bg-gray-50 rounded-lg p-4 mb-4 question-block">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h5 class="font-bold text-gray-900">Question 1</h5>
+                                    <button type="button" onclick="removeQuestion(this)" class="text-red-600 hover:text-red-700">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Question *</label>
+                                    <input type="text" name="questions[0][question]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Posez votre question...">
+                                </div>
+
+                                <div class="grid md:grid-cols-2 gap-3 mb-3">
+                                    <div>
+                                        <label class="block text-gray-700 text-sm mb-2">Option 1 *</label>
+                                        <input type="text" name="questions[0][option1]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 text-sm mb-2">Option 2 *</label>
+                                        <input type="text" name="questions[0][option2]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 text-sm mb-2">Option 3 *</label>
+                                        <input type="text" name="questions[0][option3]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 text-sm mb-2">Option 4 *</label>
+                                        <input type="text" name="questions[0][option4]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-gray-700 text-sm font-bold mb-2">Réponse correcte *</label>
+                                    <select name="questions[0][correct]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                                        <option value="">Sélectionner la bonne réponse</option>
+                                        <option value="1">Option 1</option>
+                                        <option value="2">Option 2</option>
+                                        <option value="3">Option 3</option>
+                                        <option value="4">Option 4</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="button" onclick="closeModal('createQuizModal')" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                            Annuler
+                        </button>
+                        <button type="submit" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                            <i class="fas fa-check mr-2"></i>Créer le Quiz
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- <script>
+ let questionCount = 1;
+let currentQuestionIndex = 1;
+let selectedAnswers = {};
+let timerInterval;
+
+// ==================== NAVIGATION ====================
+
+// Navigation pour l'espace enseignant
+function showSection(sectionId) {
+    document.querySelectorAll('.section-content').forEach(section => {
+        section.classList.add('hidden');
+    });
+    document.getElementById(sectionId).classList.remove('hidden');
+    
+    // Update active nav link
+    document.querySelectorAll('nav a').forEach(link => {
+        link.classList.remove('border-indigo-500', 'text-gray-900');
+        link.classList.add('border-transparent', 'text-gray-500');
+    });
+    if (event && event.target) {
+        event.target.classList.remove('border-transparent', 'text-gray-500');
+        event.target.classList.add('border-indigo-500', 'text-gray-900');
+    }
+}
+
+// Navigation pour l'espace étudiant
+function showStudentSection(sectionId, categoryName = '') {
+    document.querySelectorAll('.student-section').forEach(section => {
+        section.classList.add('hidden');
+    });
+    document.getElementById(sectionId).classList.remove('hidden');
+    
+    if (categoryName && sectionId === 'categoryQuizzes') {
+        document.getElementById('categoryTitle').textContent = categoryName;
+        loadQuizzesForCategory(categoryName);
+    }
+}
+
+// ==================== DROPDOWN ====================
+
+// Toggle user dropdown
+function toggleDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.classList.toggle('hidden');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('userDropdown');
+    const button = event.target.closest('button');
+    
+    if (!button || !button.onclick || button.onclick.toString().indexOf('toggleDropdown') === -1) {
+        if (!dropdown.contains(event.target)) {
+            dropdown.classList.add('hidden');
+        }
+    }
+});
+
+// ==================== SWITCH SPACES ====================
+
+// Switch to Student Space
+function switchToStudent() {
+    document.getElementById('teacherSpace').classList.add('hidden');
+    document.getElementById('studentSpace').classList.remove('hidden');
+    
+    // Update navigation
+    const nav = document.querySelector('nav');
+    nav.innerHTML = `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-graduation-cap text-3xl text-green-600"></i>
+                        <span class="ml-2 text-2xl font-bold text-gray-900">QuizMaster</span>
+                        <span class="ml-3 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Étudiant</span>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <button onclick="switchToTeacher()" class="mr-4 text-indigo-600 hover:text-indigo-700 font-semibold">
+                        <i class="fas fa-exchange-alt mr-2"></i>Espace Enseignant
+                    </button>
+                    <div class="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white font-semibold">
+                        AB
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Switch to Teacher Space
+function switchToTeacher() {
+    document.getElementById('studentSpace').classList.add('hidden');
+    document.getElementById('teacherSpace').classList.remove('hidden');
+    location.reload(); // Reload to restore teacher navigation
+}
+
+// ==================== MODALS ====================
+
+// Open modal
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+// Close modal
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    if (event.target.classList.contains('bg-opacity-50')) {
+        event.target.classList.add('hidden');
+        event.target.classList.remove('flex');
+    }
+}
+
+// ==================== QUIZ MANAGEMENT (TEACHER) ====================
+
+// Add Question to Quiz Creation Form
+function addQuestion() {
+    questionCount++;
+    const container = document.getElementById('questionsContainer');
+    const questionHTML = `
+        <div class="bg-gray-50 rounded-lg p-4 mb-4 question-block">
+            <div class="flex justify-between items-center mb-4">
+                <h5 class="font-bold text-gray-900">Question ${questionCount}</h5>
+                <button type="button" onclick="removeQuestion(this)" class="text-red-600 hover:text-red-700">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Question *</label>
+                <input type="text" name="questions[${questionCount-1}][question]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Posez votre question...">
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="block text-gray-700 text-sm mb-2">Option 1 *</label>
+                    <input type="text" name="questions[${questionCount-1}][option1]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm mb-2">Option 2 *</label>
+                    <input type="text" name="questions[${questionCount-1}][option2]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm mb-2">Option 3 *</label>
+                    <input type="text" name="questions[${questionCount-1}][option3]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm mb-2">Option 4 *</label>
+                    <input type="text" name="questions[${questionCount-1}][option4]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Réponse correcte *</label>
+                <select name="questions[${questionCount-1}][correct]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <option value="">Sélectionner la bonne réponse</option>
+                    <option value="1">Option 1</option>
+                    <option value="2">Option 2</option>
+                    <option value="3">Option 3</option>
+                    <option value="4">Option 4</option>
+                </select>
+            </div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', questionHTML);
+}
+
+// Remove Question from Quiz Creation Form
+function removeQuestion(button) {
+    const questionBlock = button.closest('.question-block');
+    questionBlock.remove();
+    
+    // Renumber questions
+    const questions = document.querySelectorAll('.question-block');
+    questions.forEach((q, index) => {
+        const title = q.querySelector('h5');
+        title.textContent = `Question ${index + 1}`;
+    });
+    questionCount = questions.length;
+}
+
+// ==================== STUDENT QUIZ FUNCTIONS ====================
+
+// Load quizzes based on category
+function loadQuizzesForCategory(categoryName) {
+    const quizContainer = document.getElementById('quizListContainer');
+    
+    // Quiz data by category
+    const quizData = {
+        'HTML/CSS': [
+            {
+                title: 'Les Bases de HTML5',
+                description: 'Testez vos connaissances sur les éléments HTML5 et leur utilisation',
+                questions: 20,
+                duration: 30,
+                rating: 4.8,
+                badge: 'bg-blue-100 text-blue-700'
+            },
+            {
+                title: 'CSS Avancé',
+                description: 'Flexbox, Grid, animations et responsive design',
+                questions: 15,
+                duration: 25,
+                rating: 4.6,
+                badge: 'bg-blue-100 text-blue-700'
+            },
+            {
+                title: 'Sémantique HTML',
+                description: 'Importance de la structure sémantique en HTML5',
+                questions: 12,
+                duration: 20,
+                rating: 4.9,
+                badge: 'bg-blue-100 text-blue-700'
+            }
+        ],
+        'JavaScript': [
+            {
+                title: 'JavaScript Fondamentaux',
+                description: 'Variables, types de données, opérateurs et structures de contrôle',
+                questions: 18,
+                duration: 35,
+                rating: 4.7,
+                badge: 'bg-purple-100 text-purple-700'
+            },
+            {
+                title: 'Fonctions et Portée',
+                description: 'Maîtrisez les fonctions, closures et scope en JavaScript',
+                questions: 16,
+                duration: 30,
+                rating: 4.5,
+                badge: 'bg-purple-100 text-purple-700'
+            },
+            {
+                title: 'DOM Manipulation',
+                description: 'Interaction avec le Document Object Model',
+                questions: 14,
+                duration: 25,
+                rating: 4.8,
+                badge: 'bg-purple-100 text-purple-700'
+            }
+        ],
+        'PHP/MySQL': [
+            {
+                title: 'PHP Basics',
+                description: 'Syntaxe de base, variables et opérations en PHP',
+                questions: 20,
+                duration: 30,
+                rating: 4.6,
+                badge: 'bg-green-100 text-green-700'
+            },
+            {
+                title: 'MySQL et Requêtes',
+                description: 'SELECT, INSERT, UPDATE, DELETE et JOINs',
+                questions: 22,
+                duration: 40,
+                rating: 4.7,
+                badge: 'bg-green-100 text-green-700'
+            },
+            {
+                title: 'PHP & MySQL Integration',
+                description: 'Connexion à la base de données et requêtes préparées',
+                questions: 18,
+                duration: 35,
+                rating: 4.9,
+                badge: 'bg-green-100 text-green-700'
+            }
+        ]
+    };
+
+    const quizzes = quizData[categoryName] || [];
+    
+    quizContainer.innerHTML = quizzes.map(quiz => `
+        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="px-3 py-1 ${quiz.badge} text-xs font-semibold rounded-full">${categoryName}</span>
+                    <span class="text-yellow-500"><i class="fas fa-star"></i> ${quiz.rating}</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">${quiz.title}</h3>
+                <p class="text-gray-600 mb-4 text-sm">${quiz.description}</p>
+                <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                    <span><i class="fas fa-question-circle mr-1"></i>${quiz.questions} questions</span>
+                    <span><i class="fas fa-clock mr-1"></i>${quiz.duration} min</span>
+                </div>
+                <button onclick="startQuiz('${quiz.title}')" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                    <i class="fas fa-play mr-2"></i>Commencer le Quiz
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Start Quiz
+function startQuiz(quizTitle) {
+    document.getElementById('quizTitle').textContent = quizTitle;
+    currentQuestionIndex = 1;
+    document.getElementById('currentQuestion').textContent = currentQuestionIndex;
+    selectedAnswers = {};
+    showStudentSection('takeQuiz');
+    startTimer(30 * 60); // 30 minutes
+}
+
+// Timer
+function startTimer(duration) {
+    let timeRemaining = duration;
+    
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        const minutes = Math.floor(timeRemaining / 60);
+        const seconds = timeRemaining % 60;
+        
+        document.getElementById('timer').textContent = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            alert('Temps écoulé!');
+            showQuizResults();
+        }
+        
+        timeRemaining--;
+    }, 1000);
+}
+
+// Select Answer
+function selectAnswer(element) {
+    // Remove previous selection
+    const allOptions = element.parentElement.querySelectorAll('.answer-option');
+    allOptions.forEach(opt => {
+        opt.classList.remove('border-green-500', 'bg-green-50');
+        opt.querySelector('.option-selected').classList.add('hidden');
+    });
+    
+    // Add new selection
+    element.classList.add('border-green-500', 'bg-green-50');
+    element.querySelector('.option-selected').classList.remove('hidden');
+    
+    // Store answer
+    selectedAnswers[currentQuestionIndex] = element.querySelector('span').textContent;
+}
+
+// Navigation between questions
+function nextQuestion() {
+    if (currentQuestionIndex < 20) {
+        currentQuestionIndex++;
+        document.getElementById('currentQuestion').textContent = currentQuestionIndex;
+        // Reset selection display
+        document.querySelectorAll('.answer-option').forEach(opt => {
+            opt.classList.remove('border-green-500', 'bg-green-50');
+            opt.querySelector('.option-selected').classList.add('hidden');
+        });
+    } else {
+        if (confirm('Voulez-vous soumettre votre quiz?')) {
+            showQuizResults();
+        }
+    }
+}
+
+function previousQuestion() {
+    if (currentQuestionIndex > 1) {
+        currentQuestionIndex--;
+        document.getElementById('currentQuestion').textContent = currentQuestionIndex;
+        // Reset selection display
+        document.querySelectorAll('.answer-option').forEach(opt => {
+            opt.classList.remove('border-green-500', 'bg-green-50');
+            opt.querySelector('.option-selected').classList.add('hidden');
+        });
+    }
+}
+
+function showQuizResults() {
+    clearInterval(timerInterval);
+    alert('Quiz terminé! Score: 18/20');
+    showStudentSection('studentResults');
+}
+
+// ==================== INITIALIZATION ====================
+
+// Initialize the application when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('QuizMaster initialized successfully!');
+});
+        
+    </script> -->
+
+    <script>
+// ==================== VARIABLES GLOBALES ====================
+let questionCount = 1;
+let currentQuestionIndex = 0;
+let selectedAnswers = {};
+let timerInterval;
+let currentQuiz = null;
+let studentAnswers = [];
+let quizTimer = null;
+let timeLeft = 0;
+
+// ==================== DONNÉES DES QUIZ ====================
+const quizQuestions = {
+    'Les Bases de HTML5': [
+        {
+            question: 'Quelle balise HTML5 est utilisée pour définir une section de navigation ?',
+            options: ['<nav>', '<navigation>', '<menu>', '<navbar>'],
+            correct: 0
+        },
+        {
+            question: 'Quelle balise est utilisée pour créer un lien hypertexte ?',
+            options: ['<link>', '<a>', '<href>', '<url>'],
+            correct: 1
+        },
+        {
+            question: 'Quelle propriété CSS permet de changer la couleur du texte ?',
+            options: ['text-color', 'font-color', 'color', 'text-style'],
+            correct: 2
+        }
+    ],
+    'CSS Avancé': [
+        {
+            question: 'Quelle propriété CSS permet de créer un design responsive avec Flexbox ?',
+            options: ['display: flex;', 'display: grid;', 'display: block;', 'display: inline;'],
+            correct: 0
+        }
+    ],
+    'JavaScript Fondamentaux': [
+        {
+            question: 'Comment déclarer une variable en JavaScript ES6 ?',
+            options: ['var', 'let', 'const', 'toutes ces réponses'],
+            correct: 3
+        }
+    ]
+};
+
+// ==================== NAVIGATION ====================
+
+// Navigation pour l'espace enseignant
+function showSection(sectionId) {
+    document.querySelectorAll('.section-content').forEach(section => {
+        section.classList.add('hidden');
+    });
+    document.getElementById(sectionId).classList.remove('hidden');
+    
+    // Update active nav link
+    document.querySelectorAll('nav a').forEach(link => {
+        link.classList.remove('border-indigo-500', 'text-gray-900');
+        link.classList.add('border-transparent', 'text-gray-500');
+    });
+    if (event && event.target) {
+        event.target.classList.remove('border-transparent', 'text-gray-500');
+        event.target.classList.add('border-indigo-500', 'text-gray-900');
+    }
+}
+
+// Navigation pour l'espace étudiant
+function showStudentSection(sectionId, categoryName = '') {
+    document.querySelectorAll('.student-section').forEach(section => {
+        section.classList.add('hidden');
+    });
+    document.getElementById(sectionId).classList.remove('hidden');
+    
+    if (categoryName && sectionId === 'categoryQuizzes') {
+        document.getElementById('categoryTitle').textContent = categoryName;
+        loadQuizzesForCategory(categoryName);
+    }
+    
+    // Charger les résultats si nécessaire
+    if (sectionId === 'studentResults') {
+        updateResultsTable();
+    }
+}
+
+// ==================== DROPDOWN ====================
+
+// Toggle user dropdown
+function toggleDropdown() {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.classList.toggle('hidden');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('userDropdown');
+    const button = event.target.closest('button');
+    
+    if (!button || !button.onclick || button.onclick.toString().indexOf('toggleDropdown') === -1) {
+        if (!dropdown.contains(event.target)) {
+            dropdown.classList.add('hidden');
+        }
+    }
+});
+
+// ==================== SWITCH SPACES ====================
+
+// Switch to Student Space
+function switchToStudent() {
+    document.getElementById('teacherSpace').classList.add('hidden');
+    document.getElementById('studentSpace').classList.remove('hidden');
+    
+    // Update navigation
+    const nav = document.querySelector('nav');
+    nav.innerHTML = `
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <i class="fas fa-graduation-cap text-3xl text-green-600"></i>
+                        <span class="ml-2 text-2xl font-bold text-gray-900">QuizMaster</span>
+                        <span class="ml-3 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Étudiant</span>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <button onclick="switchToTeacher()" class="mr-4 text-indigo-600 hover:text-indigo-700 font-semibold">
+                        <i class="fas fa-exchange-alt mr-2"></i>Espace Enseignant
+                    </button>
+                    <div class="w-10 h-10 rounded-full bg-green-600 flex items-center justify-center text-white font-semibold">
+                        AB
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Switch to Teacher Space
+function switchToTeacher() {
+    document.getElementById('studentSpace').classList.add('hidden');
+    document.getElementById('teacherSpace').classList.remove('hidden');
+    location.reload(); // Reload to restore teacher navigation
+}
+
+// ==================== MODALS ====================
+
+// Open modal
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+}
+
+// Close modal
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    if (event.target.classList.contains('bg-opacity-50')) {
+        event.target.classList.add('hidden');
+        event.target.classList.remove('flex');
+    }
+}
+
+// ==================== QUIZ MANAGEMENT (TEACHER) ====================
+
+// Add Question to Quiz Creation Form
+function addQuestion() {
+    questionCount++;
+    const container = document.getElementById('questionsContainer');
+    const questionHTML = `
+        <div class="bg-gray-50 rounded-lg p-4 mb-4 question-block">
+            <div class="flex justify-between items-center mb-4">
+                <h5 class="font-bold text-gray-900">Question ${questionCount}</h5>
+                <button type="button" onclick="removeQuestion(this)" class="text-red-600 hover:text-red-700">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Question *</label>
+                <input type="text" name="questions[${questionCount-1}][question]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Posez votre question...">
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-3 mb-3">
+                <div>
+                    <label class="block text-gray-700 text-sm mb-2">Option 1 *</label>
+                    <input type="text" name="questions[${questionCount-1}][option1]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm mb-2">Option 2 *</label>
+                    <input type="text" name="questions[${questionCount-1}][option2]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm mb-2">Option 3 *</label>
+                    <input type="text" name="questions[${questionCount-1}][option3]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-gray-700 text-sm mb-2">Option 4 *</label>
+                    <input type="text" name="questions[${questionCount-1}][option4]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">Réponse correcte *</label>
+                <select name="questions[${questionCount-1}][correct]" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                    <option value="">Sélectionner la bonne réponse</option>
+                    <option value="1">Option 1</option>
+                    <option value="2">Option 2</option>
+                    <option value="3">Option 3</option>
+                    <option value="4">Option 4</option>
+                </select>
+            </div>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', questionHTML);
+}
+
+// Remove Question from Quiz Creation Form
+function removeQuestion(button) {
+    const questionBlock = button.closest('.question-block');
+    questionBlock.remove();
+    
+    // Renumber questions
+    const questions = document.querySelectorAll('.question-block');
+    questions.forEach((q, index) => {
+        const title = q.querySelector('h5');
+        title.textContent = `Question ${index + 1}`;
+    });
+    questionCount = questions.length;
+}
+
+// ==================== STUDENT QUIZ FUNCTIONS ====================
+
+// Load quizzes based on category
+function loadQuizzesForCategory(categoryName) {
+    const quizContainer = document.getElementById('quizListContainer');
+    
+    // Quiz data by category
+    const quizData = {
+        'HTML/CSS': [
+            {
+                title: 'Les Bases de HTML5',
+                description: 'Testez vos connaissances sur les éléments HTML5 et leur utilisation',
+                questions: quizQuestions['Les Bases de HTML5']?.length || 3,
+                duration: 30,
+                rating: 4.8,
+                badge: 'bg-blue-100 text-blue-700'
+            },
+            {
+                title: 'CSS Avancé',
+                description: 'Flexbox, Grid, animations et responsive design',
+                questions: quizQuestions['CSS Avancé']?.length || 1,
+                duration: 25,
+                rating: 4.6,
+                badge: 'bg-blue-100 text-blue-700'
+            }
+        ],
+        'JavaScript': [
+            {
+                title: 'JavaScript Fondamentaux',
+                description: 'Variables, types de données, opérateurs et structures de contrôle',
+                questions: quizQuestions['JavaScript Fondamentaux']?.length || 1,
+                duration: 35,
+                rating: 4.7,
+                badge: 'bg-purple-100 text-purple-700'
+            }
+        ],
+        'PHP/MySQL': [
+            {
+                title: 'PHP Basics',
+                description: 'Syntaxe de base, variables et opérations en PHP',
+                questions: 20,
+                duration: 30,
+                rating: 4.6,
+                badge: 'bg-green-100 text-green-700'
+            }
+        ]
+    };
+
+    const quizzes = quizData[categoryName] || [];
+    
+    quizContainer.innerHTML = quizzes.map(quiz => `
+        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="px-3 py-1 ${quiz.badge} text-xs font-semibold rounded-full">${categoryName}</span>
+                    <span class="text-yellow-500"><i class="fas fa-star"></i> ${quiz.rating}</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">${quiz.title}</h3>
+                <p class="text-gray-600 mb-4 text-sm">${quiz.description}</p>
+                <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
+                    <span><i class="fas fa-question-circle mr-1"></i>${quiz.questions} questions</span>
+                    <span><i class="fas fa-clock mr-1"></i>${quiz.duration} min</span>
+                </div>
+                <button onclick="startQuiz('${quiz.title}')" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+                    <i class="fas fa-play mr-2"></i>Commencer le Quiz
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Start Quiz
+function startQuiz(quizTitle) {
+    currentQuiz = quizTitle;
+    currentQuestionIndex = 0;
+    studentAnswers = [];
+    timeLeft = 30 * 60; // 30 minutes in seconds
+    
+    document.getElementById('quizTitle').textContent = quizTitle;
+    document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+    
+    const totalQuestions = quizQuestions[quizTitle]?.length || 0;
+    document.getElementById('totalQuestions').textContent = totalQuestions;
+    
+    showStudentSection('takeQuiz');
+    loadQuestion();
+    startTimer();
+}
+
+// ==================== LOAD QUESTION ====================
+function loadQuestion() {
+    if (!currentQuiz || !quizQuestions[currentQuiz]) return;
+    
+    const questions = quizQuestions[currentQuiz];
+    if (currentQuestionIndex >= questions.length) return;
+    
+    const question = questions[currentQuestionIndex];
+    
+    document.getElementById('questionText').textContent = question.question;
+    document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+    
+    const optionsContainer = document.querySelector('#takeQuiz .space-y-4');
+    optionsContainer.innerHTML = '';
+    
+    question.options.forEach((option, index) => {
+        const isSelected = studentAnswers[currentQuestionIndex] === index;
+        const optionHTML = `
+            <div onclick="selectAnswer(${index})" class="answer-option p-4 border-2 ${isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200'} rounded-lg cursor-pointer hover:border-green-500 hover:bg-green-50 transition">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center mr-4">
+                        <div class="w-4 h-4 rounded-full bg-green-600 ${isSelected ? '' : 'hidden'}"></div>
+                    </div>
+                    <span class="text-lg">${option}</span>
+                </div>
+            </div>
+        `;
+        optionsContainer.innerHTML += optionHTML;
+    });
+    
+    // Update navigation buttons
+    const prevBtn = document.querySelector('#takeQuiz button:first-child');
+    const nextBtn = document.querySelector('#takeQuiz button:last-child');
+    
+    prevBtn.disabled = currentQuestionIndex === 0;
+    nextBtn.innerHTML = currentQuestionIndex === questions.length - 1 ? 
+        '<i class="fas fa-paper-plane mr-2"></i>Soumettre' : 
+        'Suivant<i class="fas fa-arrow-right ml-2"></i>';
+}
+
+// ==================== SELECT ANSWER ====================
+function selectAnswer(answerIndex) {
+    studentAnswers[currentQuestionIndex] = answerIndex;
+    loadQuestion(); // Reload to show selection
+}
+
+// ==================== NAVIGATE QUESTIONS ====================
+function nextQuestion() {
+    const questions = quizQuestions[currentQuiz];
+    if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion();
+    } else {
+        submitQuiz();
+    }
+}
+
+function previousQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+    }
+}
+
+// ==================== TIMER ====================
+function startTimer() {
+    clearInterval(timerInterval);
+    
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById('timer').textContent = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        // Color coding for timer
+        const timerElement = document.getElementById('timer');
+        timerElement.classList.remove('text-red-500', 'text-yellow-500');
+        if (timeLeft < 300) { // Less than 5 minutes
+            timerElement.classList.add('text-red-500');
+        } else if (timeLeft < 600) { // Less than 10 minutes
+            timerElement.classList.add('text-yellow-500');
+        }
+        
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            submitQuiz();
+            alert('Temps écoulé! Votre quiz a été soumis automatiquement.');
+        }
+    }, 1000);
+}
+
+// ==================== SUBMIT QUIZ ====================
+function submitQuiz() {
+    clearInterval(timerInterval);
+    
+    if (!currentQuiz) return;
+    
+    // Calculate score
+    const questions = quizQuestions[currentQuiz];
+    let score = 0;
+    let totalQuestions = questions.length;
+    
+    studentAnswers.forEach((answer, index) => {
+        if (answer === questions[index].correct) {
+            score++;
+        }
+    });
+    
+    const percentage = Math.round((score / totalQuestions) * 100);
+    
+    // Show results
+    const resultHTML = `
+        <div class="bg-white rounded-xl shadow-lg p-8 text-center">
+            <div class="w-24 h-24 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-6">
+                <i class="fas fa-trophy text-4xl text-green-600"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Quiz Terminé!</h2>
+            <p class="text-gray-600 mb-8">Vous avez complété <span class="font-bold">${currentQuiz}</span></p>
+            
+            <div class="bg-gray-50 rounded-lg p-6 mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-center">
+                        <p class="text-gray-500 text-sm">Score</p>
+                        <p class="text-4xl font-bold text-gray-900">${score}/${totalQuestions}</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-gray-500 text-sm">Pourcentage</p>
+                        <p class="text-4xl font-bold ${percentage >= 70 ? 'text-green-600' : 'text-red-600'}">
+                            ${percentage}%
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-gray-500 text-sm">Statut</p>
+                        <p class="text-xl font-bold ${percentage >= 70 ? 'text-green-600' : 'text-red-600'}">
+                            ${percentage >= 70 ? 'Réussi' : 'Échoué'}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div class="bg-green-600 h-4 rounded-full" style="width: ${percentage}%"></div>
+                </div>
+            </div>
+            
+            <div class="mb-8 text-left">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Détail des réponses:</h3>
+                ${questions.map((q, index) => {
+                    const userAnswer = studentAnswers[index];
+                    const isCorrect = userAnswer === q.correct;
+                    const hasAnswered = userAnswer !== undefined;
+                    
+                    return `
+                        <div class="mb-4 p-4 ${isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border rounded-lg">
+                            <p class="font-bold mb-2">${index + 1}. ${q.question}</p>
+                            <p class="mb-1">Votre réponse: <span class="${isCorrect ? 'text-green-600' : 'text-red-600'} font-bold">
+                                ${hasAnswered ? q.options[userAnswer] : 'Non répondue'}
+                            </span></p>
+                            ${!isCorrect ? `<p class="text-green-600 font-bold">Bonne réponse: ${q.options[q.correct]}</p>` : ''}
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            
+            <div class="flex gap-3 justify-center">
+                <button onclick="showStudentSection('studentDashboard')" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+                    <i class="fas fa-home mr-2"></i>Tableau de bord
+                </button>
+                <button onclick="showStudentSection('studentResults')" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                    <i class="fas fa-chart-bar mr-2"></i>Voir tous mes résultats
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Replace quiz interface with results
+    const quizContainer = document.querySelector('#takeQuiz .max-w-4xl');
+    quizContainer.innerHTML = resultHTML;
+    
+    // Store result in localStorage (simulating database)
+    saveQuizResult(currentQuiz, score, totalQuestions, percentage);
+}
+
+// ==================== SAVE RESULT ====================
+function saveQuizResult(quizName, score, total, percentage) {
+    let results = JSON.parse(localStorage.getItem('studentQuizResults') || '[]');
+    
+    const result = {
+        quiz: quizName,
+        score: score,
+        total: total,
+        percentage: percentage,
+        date: new Date().toLocaleDateString('fr-FR'),
+        time: new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'}),
+        status: percentage >= 70 ? 'Réussi' : 'Échoué'
+    };
+    
+    results.push(result);
+    localStorage.setItem('studentQuizResults', JSON.stringify(results));
+    
+    // Update results table
+    updateResultsTable();
+}
+
+// ==================== UPDATE RESULTS TABLE ====================
+function updateResultsTable() {
+    const results = JSON.parse(localStorage.getItem('studentQuizResults') || '[]');
+    const resultsTable = document.querySelector('#studentResults tbody');
+    
+    if (!resultsTable) return;
+    
+    resultsTable.innerHTML = results.map(result => `
+        <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 text-sm font-medium text-gray-900">${result.quiz}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs font-semibold rounded-full ${getCategoryBadge(result.quiz)}">
+                    ${getCategoryForQuiz(result.quiz)}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-lg font-bold ${result.percentage >= 70 ? 'text-green-600' : 'text-red-600'}">
+                    ${result.score}/${result.total}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${result.date}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${result.time}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${result.status === 'Réussi' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                    <i class="fas fa-${result.status === 'Réussi' ? 'check' : 'times'} mr-1"></i>${result.status}
+                </span>
+            </td>
+        </tr>
+    `).join('');
+    
+    // Update stats
+    updateStudentStats();
+}
+
+// ==================== HELPER FUNCTIONS ====================
+function getCategoryForQuiz(quizName) {
+    const quizCategories = {
+        'Les Bases de HTML5': 'HTML/CSS',
+        'CSS Avancé': 'HTML/CSS',
+        'JavaScript Fondamentaux': 'JavaScript',
+        'PHP Basics': 'PHP/MySQL'
+    };
+    return quizCategories[quizName] || 'Général';
+}
+
+function getCategoryBadge(quizName) {
+    const category = getCategoryForQuiz(quizName);
+    switch(category) {
+        case 'HTML/CSS': return 'bg-blue-100 text-blue-800';
+        case 'JavaScript': return 'bg-purple-100 text-purple-800';
+        case 'PHP/MySQL': return 'bg-green-100 text-green-800';
+        default: return 'bg-gray-100 text-gray-800';
+    }
+}
+
+function updateStudentStats() {
+    const results = JSON.parse(localStorage.getItem('studentQuizResults') || '[]');
+    
+    if (results.length === 0) return;
+    
+    // Calculate stats
+    const totalQuizzes = results.length;
+    const passedQuizzes = results.filter(r => r.status === 'Réussi').length;
+    const averageScore = results.reduce((sum, r) => sum + r.percentage, 0) / totalQuizzes;
+    const successRate = Math.round((passedQuizzes / totalQuizzes) * 100);
+    
+    // Update stats cards if they exist
+    const statsCards = document.querySelectorAll('#studentResults .bg-white.rounded-xl.shadow-md');
+    if (statsCards.length >= 4) {
+        statsCards[0].querySelector('p.text-3xl').textContent = totalQuizzes;
+        statsCards[1].querySelector('p.text-3xl').textContent = `${(averageScore / 100 * 20).toFixed(1)}/20`;
+        statsCards[2].querySelector('p.text-3xl').textContent = `${successRate}%`;
+        statsCards[3].querySelector('p.text-3xl').textContent = `#${Math.floor(Math.random() * 50) + 1}`;
+    }
+}
+
+// ==================== INITIALIZATION ====================
+
+// Initialize the application when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('QuizMaster initialized successfully!');
+    
+    // Load any existing results if in student space
+    if (document.getElementById('studentSpace') && 
+        !document.getElementById('studentSpace').classList.contains('hidden')) {
+        updateResultsTable();
+    }
+});
+        
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+                                        
