@@ -1,4 +1,6 @@
 <?php
+
+require_once __DIR__ . '/../config/session_config.php'; // Hna dertna l-config dyal session
 session_start();
 require_once __DIR__ . '/../config/database.php'; // تأكد من المسار
 
