@@ -1,10 +1,19 @@
 <?php
-session_start();
+
+require_once __DIR__ . '/../config/session_config.php'; // Hna dertna l-config dyal session
 require_once __DIR__ . '/../config/database.php';
+
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(16));
+}
 
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['token']) || $_POST['token'] !== $_SESSION['csrf_token']) {
+        die("Erreur de sécurité CSRF !");
+    }
+
     // Inputs
     $email = trim($_POST['email'] ?? '');
     $password = trim($_POST['password'] ?? '');
@@ -26,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_name'] = $user['nom'];
             $_SESSION['user_role'] = $user['role'];
             $_SESSION['user_email'] = $user['email'];
-            
+
             // Redirection selon le rôle
             if ($user['role'] === 'enseignant') {
                 header('Location: ../enseignant/index.php');
@@ -97,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
 
         <form method="POST" action="" class="space-y-6">
+            <input type="hidden" name="token" value="<?php echo $_SESSION['csrf_token'] ?>">
             <!-- Email -->
             <div>
                 <label for="email" class="block text-gray-700 font-semibold mb-2">
@@ -124,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Lien vers register -->
             <div class="text-center pt-4 border-t border-gray-200">
                 <p class="text-sm text-gray-600">
-                    Pas encore de compte ? 
+                    Pas encore de compte ?
                     <a href="register.php" class="text-indigo-600 hover:text-indigo-800 font-semibold hover:underline ml-1">
                         S'inscrire maintenant
                     </a>
