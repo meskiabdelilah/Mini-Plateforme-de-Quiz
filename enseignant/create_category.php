@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../config/session_config.php';
 require_once __DIR__ . '/../config/database.php';
 
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'enseignant') {
-    header('location: auth/login.php');
+if (!isset($_SESSION['id_user']) || $_SESSION['role'] !== 'enseignant') {
+    header('location: ../auth/login.php');
     exit;
 }
 
@@ -24,9 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($nom_categorie === '') {
         $errors[] = "Le nom est obligatoire";
-    } elseif (!preg_match("/^[A-Za-z0-9\s]+$/", $nom_categorie)) {
-        $errors[] = "Le nom doit contenir uniquement des lettres et chiffres";
-    } elseif (strlen($nom_categorie) < 2 || (strlen($nom_categorie) > 50)) {
+}  elseif (strlen($nom_categorie) < 2 || (strlen($nom_categorie) > 50)) {
         $errors[] = "Le nom doit être entre 2 et 50 caractères";
     }
 
@@ -37,8 +35,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         try {
             // Vérifier si le nom  existe déjà
-            $checknom_categorie = $pdo->prepare("SELECT id_categorie FROM categorie WHERE nom_categorie = ?");
-            $checknom_categorie->execute([$nom_categorie]);
+            $checknom_categorie = $pdo->prepare("SELECT id_categorie FROM categorie WHERE nom_categorie = ? AND created_by = ?");
+            $checknom_categorie->execute([$nom_categorie, $_SESSION['id_user']]);
 
             if ($checknom_categorie->fetch()) {
                 $errors[] = "Cette Nom est déjà utilisé.";
@@ -50,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->execute([
                     $nom_categorie,
                     $description,
-                    $_SESSION['user_id']
+                    $_SESSION['id_user']
                 ]);
 
                 $success = true;
