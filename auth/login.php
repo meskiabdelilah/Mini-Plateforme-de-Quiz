@@ -31,17 +31,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             session_regenerate_id(true);
             // Login réussi
-            $_SESSION['user_id'] = $user['id_user'];
+            $_SESSION['id_user'] = $user['id_user'];
             $_SESSION['user_name'] = $user['nom'];
-            $_SESSION['user_role'] = $user['role'];
+            $_SESSION['role'] = $user['role'];
             $_SESSION['user_email'] = $user['email'];
 
             // Redirection selon le rôle
             if ($user['role'] === 'enseignant') {
-                header('Location: ../enseignant/index.php');
+                header('Location: ../enseignant/dashboard.php');
                 exit;
             } elseif ($user['role'] === 'etudiant') {
-                header('Location: ../etudiant/index.php');
+                header('Location: ../etudiant/dashboard.php');
                 exit;
             } else {
                 $errors[] = "Rôle utilisateur non reconnu.";
